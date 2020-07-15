@@ -11,7 +11,7 @@
 
 
 // Path of the input image.
-std::string InputImagePath = "ArucoImage.jpg";
+std::string InputImagePath = "Images/ArucoImage.jpg";
 
 
 /*
