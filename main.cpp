@@ -36,8 +36,27 @@ bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon
 }
 
 
+
+void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
+{
+	std::vector<std::vector<cv::Point>> ArucoContour;
+	std::vector<cv::Point> ArucoContour_Corner;
+	for (int i = 0; i < Corners.size(); i++)
+	{
+		ArucoContour_Corner.push_back((cv::Point)Corners[i]);
+	}
+	ArucoContour.push_back(ArucoContour_Corner);
+
+	cv::drawContours(Image, ArucoContour, -1, cv::Scalar(0, 255, 0), -1);
+	
+}
+
+
+
 int main()
 {
+	int Count = 0;
+
 	bool FirstFrameFlag = true;
 	int Polygon_ID;
 
@@ -76,12 +95,26 @@ int main()
 		bool IsArucoVisible = CkeckIfArucoVisible(Polygon_ID, IDs, Next_Polygon_ID);
 
 		if (!IsArucoVisible)
+		{
+			Count++;
 			Polygon_ID = Next_Polygon_ID;
+		}
 
-
+		for (int i = 0; i < IDs.size(); i++)
+		{
+			if (Polygon_ID == IDs[i])
+			{
+				DrawPolygon(Frame, Corners[i]);
+				break;
+			}
+		}
 
 
 		cv::imshow("Input", Frame);
+
+		if (Count > 30)
+			break;
+
 		if (cv::waitKey(1) == 32)
 			break;
 	}
