@@ -2,3 +2,8 @@
 /*.sln
 /*.vcxproj*
 /x64
+/*.dir/
+/CMakeCache.txt
+/CMakeFiles/
+/Debug/
+/*.cmake
