@@ -10,9 +10,6 @@
 #include <iostream>
 
 
-// Path of the input image.
-std::string InputImagePath = "Images/ArucoImage.jpg";
-
 
 /*
  * Function		: SortCorners_wrt_IDs
@@ -84,21 +81,3 @@ bool DetectAruco(cv::Mat ArucoImage, std::vector<int>& sorted_IDs, std::vector<s
 	return true;
 }
 
-
-
-/*
- * Function		: main
- * Parameters	: InputImagePath - Path of the image in which aruco markers are to be detected.
- * Description	: This function reads the image and pass it to other function to detect aruco markers in it.
- */
-void main()
-{
-	// Reading input image
-	cv::Mat InputImage = cv::imread(InputImagePath);
-
-	// Detect markers
-	std::vector<int> IDs;
-	std::vector<std::vector<cv::Point2f>> Corners;
-	bool Ret1 = DetectAruco(InputImage, IDs, Corners);
-
-}
