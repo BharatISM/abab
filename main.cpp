@@ -15,6 +15,16 @@
 auto InputVideoPath = "Videos/Aruco_Hand_Video.mp4";
 
 
+/*
+ * Function		: CkeckIfArucoVisible
+ * Parameters	: Polygon_ID - ID of aruco marker on which polygon was drawn in the previous frame.
+ *				  IDs - IDs of all aruco markers in the current frame in a sorted order.
+ *				  Next_Polygon_ID - ID of aruco marker on which polygon will be drawn in the current 
+ *									frame.
+ * Description	: This function checks that the aruco on which polgon was drawn on the last frame is 
+ *				  visible now or not. It accordingly tells on which aruco the polygon will be made 
+ *				  in current frame.
+ */
 bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon_ID)
 {
 	int Num_of_IDs = IDs.size();
@@ -37,6 +47,13 @@ bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon
 
 
 
+/*
+ * Function		: DrawPolygon
+ * Parameters	: Image - Current frame
+ *				  Corners - Corner coordinates of the aruco marker on which polygon should 
+ *							be made in current frame.
+ * Description	: This function draws the polygon on the current frame with the corners provided.
+ */
 void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 {
 	std::vector<std::vector<cv::Point>> ArucoContour;
@@ -53,6 +70,12 @@ void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 
 
 
+/*
+ * Function		: main
+ * Parameters	: -
+ * Description	: This is the main function of the program. It calls other functions in 
+ *				  order to give the output.
+ */
 int main()
 {
 	int Count = 0;
