@@ -12,7 +12,7 @@
 #include "ArucoDetection.h"
 
 
-std::string InputVideoPath = "Videos/Aruco_Hand_Video.mp4";
+auto InputVideoPath = "Videos/Aruco_Hand_Video.mp4";
 
 
 bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon_ID)
@@ -77,13 +77,21 @@ int main()
 
 		// Breaking if frame is empty.
 		if (Frame.empty())
+		{	
+			std::cout << "Empty frame read. Exiting the program.\n";
 			break;
-		
+		}
+
 		std::vector<int> IDs; std::vector<std::vector<cv::Point2f>> Corners;
 		bool IsArucoFound = DetectAruco(Frame, IDs, Corners);
 
 		if (!IsArucoFound)
+		{
+			cv::imshow("Input", Frame);
+			if (cv::waitKey(1) == 32)
+				break;
 			continue;
+		}
 
 		if (IsArucoFound && FirstFrameFlag)
 		{
