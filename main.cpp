@@ -12,9 +12,11 @@
 #include "ArucoDetection.h"
 
 
-auto InputVideoPath = "Videos/Aruco_Hand_Video.mp4";
-int Max_Poly_Shift = 30;
-int Color[3] = { 0, 0, 255 };
+// Change these params to modify code functioning.
+auto InputVideoPath = "Videos/Aruco_Hand_Video.mp4";	// Path of input video. Set to '0' to use webcam.
+int Max_Poly_Shift = 30;								// Number of times polygon should shift to next marker.
+int Color[3] = { 0, 0, 255 };							// Color of the polygon - BGR format.
+
 
 
 /*
@@ -29,20 +31,20 @@ int Color[3] = { 0, 0, 255 };
  */
 bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon_ID)
 {
-	int Num_of_IDs = IDs.size();
-
-	for (int i = 0; i < Num_of_IDs; i++)
+	for (int i = 0; i < IDs.size(); i++)
 	{
-		if (Polygon_ID == IDs[i])
+		if (Polygon_ID == IDs[i])				// If id found.
 			return true;
-		else if (Polygon_ID > IDs[i])
+		else if (Polygon_ID > IDs[i])			// Continue searching
 			continue;
-		else if (Polygon_ID < IDs[i])
+		else if (Polygon_ID < IDs[i])			// If id not found.
 		{
-			Next_Polygon_ID = IDs[i];
+			Next_Polygon_ID = IDs[i];			// Setting next markers id on which polygon should be drawn.
 			return false;
 		}
 	}
+
+	// If still not found, next marker's id will be ID at index 0
 	Next_Polygon_ID = IDs[0];
 	return false;
 }
@@ -58,6 +60,7 @@ bool CkeckIfArucoVisible(int Polygon_ID, std::vector<int> IDs, int& Next_Polygon
  */
 void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 {
+	// Converting corner coordinates to contour data.
 	std::vector<std::vector<cv::Point>> ArucoContour;
 	std::vector<cv::Point> ArucoContour_Corner;
 	for (int i = 0; i < Corners.size(); i++)
@@ -66,6 +69,7 @@ void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 	}
 	ArucoContour.push_back(ArucoContour_Corner);
 
+	// Drawing the polygon(contour) on the image.
 	cv::drawContours(Image, ArucoContour, -1, cv::Scalar(Color[0], Color[1], Color[2]), -1);
 	
 }
@@ -84,6 +88,7 @@ int main()
 	bool FirstFrameFlag = true;
 	int Polygon_ID;
 
+	// Getting video object.
 	cv::VideoCapture Cap(InputVideoPath);
 
 	// Check if camera opened successfully
@@ -106,32 +111,38 @@ int main()
 			break;
 		}
 
+		// Detecting markers in the frame.
 		std::vector<int> IDs; std::vector<std::vector<cv::Point2f>> Corners;
 		bool IsArucoFound = DetectAruco(Frame, IDs, Corners);
 
+		// If no marker found, just show the current frame and continue.
 		if (!IsArucoFound)
 		{
 			cv::imshow("Input", Frame);
-			if (cv::waitKey(1) == 32)
+			if (cv::waitKey(1) == 32)			// Break if spacebar pressed.
 				break;
 			continue;
 		}
 
+		// If it is the first frame in which aruco marker(s) are found.
 		if (IsArucoFound && FirstFrameFlag)
 		{
 			FirstFrameFlag = false;
 			Polygon_ID = IDs[0];
 		}
 
+		// Checking if aruco having polygon on it in previous frame is visible in current frame or not.
 		int Next_Polygon_ID;
 		bool IsArucoVisible = CkeckIfArucoVisible(Polygon_ID, IDs, Next_Polygon_ID);
 
+		// If not present, Update count value and Polygon's aruco id.
 		if (!IsArucoVisible)
 		{
 			Count++;
 			Polygon_ID = Next_Polygon_ID;
 		}
 
+		// Drawing polygon on the frame.
 		for (int i = 0; i < IDs.size(); i++)
 		{
 			if (Polygon_ID == IDs[i])
@@ -141,13 +152,16 @@ int main()
 			}
 		}
 
-
-		cv::imshow("Input", Frame);
-
+		// Break if polygon is shifted to next aruco enough times.
 		if (Count > Max_Poly_Shift)
+		{
+			std::cout << "\nProgram Successful!!!\n";
 			break;
+		}
 
-		if (cv::waitKey(1) == 32)
+		// Showing frame
+		cv::imshow("Input", Frame);
+		if (cv::waitKey(1) == 32)			// Break if spacebar is pressed.
 			break;
 	}
 
