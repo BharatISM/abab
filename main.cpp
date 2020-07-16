@@ -13,6 +13,8 @@
 
 
 auto InputVideoPath = "Videos/Aruco_Hand_Video.mp4";
+int Max_Poly_Shift = 30;
+int Color[3] = { 0, 0, 255 };
 
 
 /*
@@ -64,7 +66,7 @@ void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 	}
 	ArucoContour.push_back(ArucoContour_Corner);
 
-	cv::drawContours(Image, ArucoContour, -1, cv::Scalar(0, 255, 0), -1);
+	cv::drawContours(Image, ArucoContour, -1, cv::Scalar(Color[0], Color[1], Color[2]), -1);
 	
 }
 
@@ -79,7 +81,6 @@ void DrawPolygon(cv::Mat& Image, std::vector<cv::Point2f> Corners)
 int main()
 {
 	int Count = 0;
-
 	bool FirstFrameFlag = true;
 	int Polygon_ID;
 
@@ -143,7 +144,7 @@ int main()
 
 		cv::imshow("Input", Frame);
 
-		if (Count > 30)
+		if (Count > Max_Poly_Shift)
 			break;
 
 		if (cv::waitKey(1) == 32)
